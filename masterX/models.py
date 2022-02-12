@@ -1,3 +1,4 @@
+from operator import truediv
 from django.db import models
 import random
 from datetime import datetime
@@ -77,12 +78,45 @@ class ClientCodeGen(models.Model):
 
 class Branch(models.Model):
     name = models.CharField(max_length=300, blank=True, null=True)
+    photo = models.ImageField(upload_to='Branch/%y/%m/%d', blank=True, null=True)
+
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.photo:
+            imageTemproary = Image.open(self.photo)
+            outputIoStream = BytesIO()
+            imageTemproaryResized = imageTemproary.resize( (200,100) ) 
+            imageTemproaryResized.save(outputIoStream , format='JPEG', quality=25)
+            outputIoStream.seek(0)
+            self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
+                                                'image/jpeg', sys.getsizeof(outputIoStream), None)
+        super(Branch, self).save(*args, **kwargs)
+
+class SuperCategory(models.Model):
+    ai = models.CharField(max_length=300, blank=True, null=True)
+    name = models.CharField(max_length=300, blank=True, null=True)
+    photo = models.ImageField(upload_to='SuperCategory/%y/%m/%d', blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if self.photo:
+            imageTemproary = Image.open(self.photo)
+            outputIoStream = BytesIO()
+            imageTemproaryResized = imageTemproary.resize( (200,100) ) 
+            imageTemproaryResized.save(outputIoStream , format='JPEG', quality=25)
+            outputIoStream.seek(0)
+            self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
+                                                'image/jpeg', sys.getsizeof(outputIoStream), None)
+        super(SuperCategory, self).save(*args, **kwargs)
 
 class Category(models.Model):
     ai = models.CharField(max_length=300, blank=True, null=True)
     name = models.CharField(max_length=300, blank=True, null=True)
+    super = models.ForeignKey('SuperCategory', related_name='category', on_delete=models.CASCADE)
     photo = models.ImageField(upload_to='Category/%y/%m/%d', blank=True, null=True)
 
     def __str__(self):
@@ -120,9 +154,21 @@ class SubCategory(models.Model):
         
 class Brand(models.Model):
     name = models.CharField(max_length=300, blank=True, null=True)
+    photo = models.ImageField(upload_to='Brand/%y/%m/%d', blank=True, null=True)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.photo:
+            imageTemproary = Image.open(self.photo)
+            outputIoStream = BytesIO()
+            imageTemproaryResized = imageTemproary.resize( (200,100) ) 
+            imageTemproaryResized.save(outputIoStream , format='JPEG', quality=25)
+            outputIoStream.seek(0)
+            self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
+                                                'image/jpeg', sys.getsizeof(outputIoStream), None)
+        super(Brand, self).save(*args, **kwargs)
 
 class Gender(models.Model):
     name = models.CharField(max_length=300, blank=True, null=True)
@@ -145,9 +191,15 @@ class Size(models.Model):
 class Update(models.Model):
     update_product = models.BooleanField(default=False)
     
-class New(models.Model):
-    new_product = models.BooleanField(default=False)
+class Visited(models.Model):
+    visit = models.IntegerField(default=0)
 
+class Location(models.Model):
+    name = models.CharField(max_length=500, blank=True, null=True, unique=True)
+
+    def __str__(self):
+        return self.name
+    
 class Message(models.Model):
     question_text = models.TextField()
     answer_text = models.TextField()
@@ -176,6 +228,8 @@ class Product(models.Model):
     name = models.CharField(max_length=300, blank=True, null=True)
     branch_name = models.ForeignKey('Branch', related_name='products', on_delete=models.CASCADE)
     description = models.TextField()
+    visited = models.IntegerField(default=0)
+    location = models.ForeignKey('Location', on_delete=models.CASCADE)
     in_dollar = models.FloatField(null=True, default=None)
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
     price = models.FloatField(blank=True, null=True)
@@ -187,6 +241,7 @@ class Product(models.Model):
     color = models.ForeignKey('Color', related_name='products', on_delete=models.CASCADE)
     size = models.ForeignKey('Size', related_name='products', on_delete=models.CASCADE)
     gender = models.ForeignKey('Gender', related_name='products', on_delete=models.CASCADE)
+    supercategory = models.ForeignKey('SuperCategory', related_name='products' ,on_delete=models.CASCADE)
     category = models.ForeignKey('Category', related_name='products', on_delete=models.CASCADE)
     subcategory = models.ForeignKey('SubCategory', related_name='products', on_delete=models.CASCADE)
     brand = models.ForeignKey('Brand', related_name='products', on_delete=models.CASCADE)

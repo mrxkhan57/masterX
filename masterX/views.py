@@ -37,10 +37,18 @@ class BranchCreate(viewsets.ModelViewSet):
     serializer_class = BranchSerializer
     queryset = Branch.objects.all().order_by('pk')
 
+class SuperCreate(viewsets.ModelViewSet):
+    serializer_class = SuperSerializer
+    queryset = SuperCategory.objects.all().order_by('pk')
+
 class CategoryCreate(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all().order_by('pk')
     filter_fields = ('ai', 'name')
+
+class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all().order_by('pk')
 
 class SubCategoryCreate(viewsets.ModelViewSet):
     serializer_class = SubCategorySerializer
@@ -50,11 +58,9 @@ class SubCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SubCategorySerializer
     queryset = SubCategory.objects.all().order_by('pk')
     
-
 class BrandCreate(viewsets.ModelViewSet):
     serializer_class = BrandSerializer
     queryset = Brand.objects.all().order_by('pk')
-
 
 class GenderCreate(viewsets.ModelViewSet):
     serializer_class = GenderSerializer
@@ -72,9 +78,13 @@ class UpdateCreate(viewsets.ModelViewSet):
     serializer_class = UpdateSerializer
     queryset = Update.objects.all().order_by('pk')
 
-class NewCreate(viewsets.ModelViewSet):
-    serializer_class = NewSerializer
-    queryset = New.objects.all().order_by('pk')
+class VisitCreate(viewsets.ModelViewSet):
+    serializer_class = VisitedSerializer
+    queryset = Visited.objects.all()
+
+class LocationCreate(viewsets.ModelViewSet):
+    serializer_class = LocationSerializer
+    queryset = Location.objects.all().order_by('pk')
 
 class MessageCreate(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
@@ -93,7 +103,7 @@ class ProductFilter(filters.FilterSet):
     class Meta:
         model = Product
         fields = ('ai', 'name', 'description', 'branch_name', 'category', 'subcategory', 
-        'brand', 'gender', 'size', 'color', 'date', 'new', 'in_dollar','exchange', 'price', 
+        'brand', 'location','gender', 'size', 'color', 'date', 'new', 'in_dollar','exchange', 'price', 
         'discount', 'discounted_price', 'new_price', 'calc_dollar', 'calc_discount')
 
 class ProductCreate(viewsets.ModelViewSet):

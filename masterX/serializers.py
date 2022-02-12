@@ -31,7 +31,16 @@ class BranchSerializer(serializers.HyperlinkedModelSerializer):
                                                     view_name='product_detail')
     class Meta:
         model = Branch
-        fields = ['pk', 'name', 'products', 'url']
+        fields = ['pk', 'name', 'photo', 'products', 'url']
+
+class SuperSerializer(serializers.HyperlinkedModelSerializer):
+    products = serializers.HyperlinkedRelatedField(many = True, read_only = True,
+                                                        view_name='product_detail')
+    category = serializers.HyperlinkedRelatedField(many = True, read_only = True,
+                                                        view_name='category_detail')
+    class Meta:
+        model = SuperCategory
+        fields = ['pk','name','photo','category','products','url']
 
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     products = serializers.HyperlinkedRelatedField(many = True, read_only = True,
@@ -41,7 +50,7 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['pk', 'ai', 'name', 'photo', 'url', 'products', 'subcategory']
+        fields = ['pk', 'ai', 'name', 'super','photo', 'url', 'products', 'subcategory']
 
 class SubCategorySerializer(serializers.HyperlinkedModelSerializer):
     products = serializers.HyperlinkedRelatedField(many = True, read_only = True,
@@ -57,7 +66,7 @@ class BrandSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Brand
-        fields = ['pk', 'name', 'url', 'products']
+        fields = ['pk', 'name', 'photo', 'url', 'products']
 
 class GenderSerializer(serializers.HyperlinkedModelSerializer):
     products = serializers.HyperlinkedRelatedField(many = True, read_only = True,
@@ -84,12 +93,17 @@ class SizeSerializer(serializers.HyperlinkedModelSerializer):
 class UpdateSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Update
-        fields = ['url', 'pk', 'update_product']
+        fields = ['pk', 'url', 'update_product']
 
-class NewSerializer(serializers.HyperlinkedModelSerializer):
+class VisitedSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = New
-        fields = ['url', 'pk', 'new_product']
+        model = Visited
+        fields = ['visit', 'url']
+
+class LocationSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Location
+        fields = ['pk', 'name', 'url']
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -109,13 +123,14 @@ class DiscountSerializer(serializers.HyperlinkedModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['pk', 'ai', 'date', 'name', 'branch_name', 'description', 'in_dollar', 'exchange', 'price', 'discount', 
-                'discounted_price', 'new_price', 'calc_dollar', 'calc_discount', 'color', 'size', 'gender',
+        fields = ['pk', 'ai', 'date', 'name', 'branch_name', 'description', 'visited', 'location','in_dollar', 'exchange', 'price', 'discount', 
+                'discounted_price', 'new_price', 'calc_dollar', 'calc_discount', 'color', 'size', 'gender', 'supercategory',
                 'category', 'subcategory', 'brand', 'new', 'photo1', 'photo2', 'photo3', 'photo4', 'url']
 
     def to_representation(self, instance):
         rep = super(ProductSerializer, self).to_representation(instance)
         rep['branch_name'] = instance.branch_name.name
+        rep['supercategory'] = instance.supercategory.name
         rep['category'] = instance.category.name
         rep['subcategory'] = instance.subcategory.name
         rep['brand'] = instance.brand.name
@@ -124,6 +139,7 @@ class ProductSerializer(serializers.ModelSerializer):
         rep['gender'] = instance.gender.name
         rep['exchange'] = instance.exchange.exchange
         rep['discount'] = instance.discount.discount
+        rep['location'] = instance.location.name
         return rep
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):

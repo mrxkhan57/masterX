@@ -23,7 +23,7 @@ from masterX import views
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('mrx/', admin.site.urls),
     path('', include('masterX.urls')),
     path('Orderss/', views.index), 
     path('export_orders', views.export_orders),

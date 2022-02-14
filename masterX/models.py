@@ -1,3 +1,4 @@
+from distutils.command.upload import upload
 from operator import truediv
 from django.db import models
 import random
@@ -7,12 +8,26 @@ from PIL import Image
 from io import BytesIO
 import sys
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.forms import JSONField
 
-class Admin(models.Model):
+class Admins(models.Model):
     name = models.CharField(max_length=300, blank=True, null=True)
     username = models.CharField(max_length=300, blank=True, null=True, unique=True)
     password = models.CharField(max_length=300, blank=True, null=True)
     phone = models.CharField(max_length=12, blank=True, null=True, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class Ads(models.Model):
+    name = models.CharField(max_length=500, blank=True, null=True)
+    photo = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
+    photo1 = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
+    photo2 = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
+    photo3 = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
+    photo4 = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
+    photo5 = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
+    photo6 = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -31,12 +46,18 @@ class Client(models.Model):
     name = models.CharField(max_length=300, blank=True, null=True)
     address = models.CharField(max_length=500, blank=True, null=True)
     number = models.CharField(max_length=12, blank=True, null=True)
-
     def __str__(self):
         return self.name
 
+class ClientIPLogList(models.Model):
+    date = models.TimeField(auto_now_add=True)
+    client_ip = models.GenericIPAddressField(null=True)
+
+    def __str__(self):
+        return "{}".format(self.client_ip)
+
 class AdminCodeGen(models.Model):
-    phone_number = models.ForeignKey(Admin, to_field='phone',
+    phone_number = models.ForeignKey(Admins, to_field='phone',
                                      on_delete=models.CASCADE) #or use to_field = 'in models field'
     code = models.CharField(max_length=6, blank=True)
     

@@ -3,8 +3,13 @@ from .models import *
 
 class AdminSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Admin
+        model = Admins
         fields = ['pk', 'name', 'username', 'password', 'phone', 'url']
+
+class AdsSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Ads
+        fields = ['pk', 'name', 'photo', 'photo1', 'photo2', 'photo3', 'photo4', 'photo5', 'photo6']
 
 class AboutUsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -25,6 +30,16 @@ class ClientCodeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ClientCodeGen
         fields = ['pk', 'phone_number', 'code', 'url']
+
+class LoglistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClientIPLogList
+        fields = ('pk', 'date', 'client_ip')
+        read_only_fields = ('date', 'client_ip')
+
+    def create(self, validated_data):
+        validated_data['clieant_ip'] = self.context.get('request').META.get("REMOTE_ADDR")
+        return ClientIPLogList.objects.create(**validated_data)
 
 class BranchSerializer(serializers.HyperlinkedModelSerializer):
     products = serializers.HyperlinkedRelatedField(many = True, read_only = True,

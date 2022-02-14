@@ -1,9 +1,11 @@
 from django.contrib import admin
 from .models import *
 
-admin.site.register(Admin)
+admin.site.register(Admins)
+admin.site.register(Ads)
 admin.site.register(AboutUs)
 admin.site.register(Client)
+admin.site.register(ClientIPLogList)
 admin.site.register(AdminCodeGen)
 admin.site.register(ClientCodeGen)
 admin.site.register(Branch)

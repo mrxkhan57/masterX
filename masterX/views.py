@@ -15,7 +15,11 @@ from django_filters import rest_framework as filters
 
 class AdminCreate(viewsets.ModelViewSet):
     serializer_class = AdminSerializer
-    queryset = Admin.objects.all().order_by('pk')
+    queryset = Admins.objects.all().order_by('pk')
+
+class AdsCreate(viewsets.ModelViewSet):
+    serializer_class = AdsSerializer
+    queryset = Ads.objects.all().order_by('pk')
 
 class AboutUsCreate(viewsets.ModelViewSet):
     serializer_class = AboutUsSerializer
@@ -32,6 +36,17 @@ class AdminCodeCreate(viewsets.ModelViewSet):
 class ClientCodeCreate(viewsets.ModelViewSet):
     serializer_class = ClientCodeSerializer
     queryset = ClientCodeGen.objects.all().order_by('pk')
+
+class ClientIPView(generics.ListCreateAPIView):
+    queryset = ClientIPLogList.objects.all()
+    serializer_class = LoglistSerializer
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+class ClientIPDetailsView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ClientIPLogList.objects.all()
+    serializer_class = LoglistSerializer
 
 class BranchCreate(viewsets.ModelViewSet):
     serializer_class = BranchSerializer
@@ -82,6 +97,19 @@ class VisitCreate(viewsets.ModelViewSet):
     serializer_class = VisitedSerializer
     queryset = Visited.objects.all()
 
+    def retrieve(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.visit = obj.visit + 1
+        obj.save(update_fields=("visit", ))
+        return super().retrieve(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        for obj in queryset:
+            obj.visit = obj.visit + 1
+            obj.save(update_fields=("visit", ))
+        return super().list(request, *args, **kwargs)
+
 class LocationCreate(viewsets.ModelViewSet):
     serializer_class = LocationSerializer
     queryset = Location.objects.all().order_by('pk')
@@ -110,6 +138,19 @@ class ProductCreate(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     queryset = Product.objects.all().order_by('pk')
     filterset_class = ProductFilter
+
+    def retrieve(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.visited = obj.visited + 1
+        obj.save(update_fields=("visited", ))
+        return super().retrieve(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        for obj in queryset:
+            obj.visited = obj.visited + 1
+            obj.save(update_fields=("visited", ))
+        return super().list(request, *args, **kwargs)
 
 class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer

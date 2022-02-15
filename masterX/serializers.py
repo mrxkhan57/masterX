@@ -9,7 +9,7 @@ class AdminSerializer(serializers.HyperlinkedModelSerializer):
 class AdsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Ads
-        fields = ['pk', 'name', 'photo', 'photo1', 'photo2', 'photo3', 'photo4', 'photo5', 'photo6']
+        fields = ['pk', 'name', 'photo', 'url']
 
 class AboutUsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -38,7 +38,7 @@ class LoglistSerializer(serializers.ModelSerializer):
         read_only_fields = ('date', 'client_ip')
 
     def create(self, validated_data):
-        validated_data['clieant_ip'] = self.context.get('request').META.get("REMOTE_ADDR")
+        validated_data['client_ip'] = self.context.get('request').META.get("REMOTE_ADDR")
         return ClientIPLogList.objects.create(**validated_data)
 
 class BranchSerializer(serializers.HyperlinkedModelSerializer):

@@ -22,13 +22,7 @@ class Admins(models.Model):
 class Ads(models.Model):
     name = models.CharField(max_length=500, blank=True, null=True)
     photo = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
-    photo1 = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
-    photo2 = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
-    photo3 = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
-    photo4 = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
-    photo5 = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
-    photo6 = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
-
+    
     def __str__(self):
         return self.name
 
@@ -46,6 +40,7 @@ class Client(models.Model):
     name = models.CharField(max_length=300, blank=True, null=True)
     address = models.CharField(max_length=500, blank=True, null=True)
     number = models.CharField(max_length=12, blank=True, null=True)
+
     def __str__(self):
         return self.name
 
@@ -271,6 +266,7 @@ class Product(models.Model):
     photo2 = models.ImageField(upload_to = 'Photo_2/%y/%m/%d', blank=True, null=True)
     photo3 = models.ImageField(upload_to = 'Photo_3/%y/%m/%d', blank=True, null=True)
     photo4 = models.ImageField(upload_to = 'Photo_4/%y/%m/%d', blank=True, null=True)
+    
     def save(self, *args, **kwargs):
         if self.calc_dollar is True:
             self.price = self.in_dollar * float(self.exchange.exchange)

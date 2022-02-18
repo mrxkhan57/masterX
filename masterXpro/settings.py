@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
-    'masterX.apps.MasterxConfig'
+    'corsheaders',
+    'masterX.apps.MasterxConfig',    
 ]
 
 MIDDLEWARE = [

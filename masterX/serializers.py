@@ -9,7 +9,7 @@ class AdminSerializer(serializers.HyperlinkedModelSerializer):
 class AdsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Ads
-        fields = ['pk', 'name', 'photo', 'url']
+        fields = ['pk', 'name', 'description', 'photo', 'url']
 
 class AboutUsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

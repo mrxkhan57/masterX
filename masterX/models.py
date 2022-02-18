@@ -1,4 +1,3 @@
-from distutils.command.upload import upload
 from operator import truediv
 from django.db import models
 import random
@@ -8,7 +7,6 @@ from PIL import Image
 from io import BytesIO
 import sys
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.forms import JSONField
 
 class Admins(models.Model):
     name = models.CharField(max_length=300, blank=True, null=True)
@@ -21,6 +19,7 @@ class Admins(models.Model):
 
 class Ads(models.Model):
     name = models.CharField(max_length=500, blank=True, null=True)
+    description = models.TextField()
     photo = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
     
     def __str__(self):

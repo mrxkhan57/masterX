@@ -1,11 +1,6 @@
 from rest_framework import serializers
 from .models import *
 
-class AdminSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Admins
-        fields = ['pk', 'name', 'username', 'password', 'phone', 'url']
-
 class AdsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Ads
@@ -20,11 +15,6 @@ class ClientSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Client
         fields = ['pk', 'name', 'address', 'number', 'url']
-
-class AdminCodeSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = AdminCodeGen
-        fields = ['pk', 'phone_number', 'code', 'url']
 
 class ClientCodeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -41,12 +31,12 @@ class LoglistSerializer(serializers.ModelSerializer):
         validated_data['client_ip'] = self.context.get('request').META.get("REMOTE_ADDR")
         return ClientIPLogList.objects.create(**validated_data)
 
-class BranchSerializer(serializers.HyperlinkedModelSerializer):
+class VendorSerializer(serializers.HyperlinkedModelSerializer):
     products = serializers.HyperlinkedRelatedField(many = True, read_only = True,
                                                     view_name='product_detail')
     class Meta:
-        model = Branch
-        fields = ['pk', 'name', 'photo', 'products', 'url']
+        model = Vendor
+        fields = ['pk','vendor_name','admin_name','username','passwd','phone_number','address','photo', 'products', 'url']
 
 class SuperSerializer(serializers.HyperlinkedModelSerializer):
     products = serializers.HyperlinkedRelatedField(many = True, read_only = True,
@@ -138,7 +128,7 @@ class DiscountSerializer(serializers.HyperlinkedModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['pk', 'ai', 'date', 'name', 'branch_name', 'description', 'visited', 'location','in_dollar', 'exchange', 'price', 'discount', 
+        fields = ['pk', 'ai', 'date', 'name', 'vendor_name', 'description', 'visited', 'location','in_dollar', 'exchange', 'price', 'discount', 
                 'discounted_price', 'new_price', 'calc_dollar', 'calc_discount', 'color', 'size', 'gender', 'supercategory',
                 'category', 'subcategory', 'brand', 'new', 'photo1', 'photo2', 'photo3', 'photo4', 'url']
 

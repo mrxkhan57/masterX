@@ -8,15 +8,6 @@ from io import BytesIO
 import sys
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-class Admins(models.Model):
-    name = models.CharField(max_length=300, blank=True, null=True)
-    username = models.CharField(max_length=300, blank=True, null=True, unique=True)
-    password = models.CharField(max_length=300, blank=True, null=True)
-    phone = models.CharField(max_length=12, blank=True, null=True, unique=True)
-
-    def __str__(self):
-        return self.name
-
 class Ads(models.Model):
     name = models.CharField(max_length=500, blank=True, null=True)
     description = models.TextField()
@@ -39,6 +30,7 @@ class Client(models.Model):
     name = models.CharField(max_length=300, blank=True, null=True)
     address = models.CharField(max_length=500, blank=True, null=True)
     number = models.CharField(max_length=12, blank=True, null=True)
+    description = models.TextField()
 
     def __str__(self):
         return self.name
@@ -49,27 +41,6 @@ class ClientIPLogList(models.Model):
 
     def __str__(self):
         return "{}".format(self.client_ip)
-
-class AdminCodeGen(models.Model):
-    phone_number = models.ForeignKey(Admins, to_field='phone',
-                                     on_delete=models.CASCADE) #or use to_field = 'in models field'
-    code = models.CharField(max_length=6, blank=True)
-    
-    def __str__(self):
-        return str(self.phone_number)
-    
-    def save(self, *args, **kwargs):
-        if self.phone_number:
-            number_list = [x for x in range(10)]
-            code_items = []
-
-            for i in range(6):
-                num = random.choice(number_list)
-                code_items.append(num)
-
-            code_string = "".join(str(item) for item in code_items)
-            self.code = code_string
-            super().save(*args, **kwargs)
 
 class ClientCodeGen(models.Model):
     phone_number = models.CharField(max_length=12, blank=True)
@@ -91,12 +62,17 @@ class ClientCodeGen(models.Model):
             self.code = code_string
             super().save(*args, **kwargs)
 
-class Branch(models.Model):
-    name = models.CharField(max_length=300, blank=True, null=True)
-    photo = models.ImageField(upload_to='Branch/%y/%m/%d', blank=True, null=True)
+class Vendor(models.Model):
+    vendor_name = models.CharField(max_length=300, blank=True, null=True)
+    admin_name = models.CharField(max_length=300, blank=True, null=True)
+    username = models.CharField(max_length=300, blank=True, null=True, unique=True)
+    passwd = models.CharField(max_length=300, blank=True, null=True)
+    phone_number = models.CharField(max_length=12, blank=True, null=True, unique=True)
+    address = models.CharField(max_length=500, blank=True, null=True)
+    photo = models.ImageField(upload_to='Vendor/%y/%m/%d', blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.admin_name
 
     def save(self, *args, **kwargs):
         if self.photo:
@@ -107,7 +83,7 @@ class Branch(models.Model):
             outputIoStream.seek(0)
             self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
                                                 'image/jpeg', sys.getsizeof(outputIoStream), None)
-        super(Branch, self).save(*args, **kwargs)
+        super(Vendor, self).save(*args, **kwargs)
 
 class SuperCategory(models.Model):
     ai = models.CharField(max_length=300, blank=True, null=True)
@@ -241,7 +217,7 @@ class Product(models.Model):
     ai = models.CharField(max_length=300, blank=True, null=True)
     date = models.CharField(max_length=100, blank=True)
     name = models.CharField(max_length=300, blank=True, null=True)
-    branch_name = models.ForeignKey('Branch', related_name='products', on_delete=models.CASCADE)
+    vendor_name = models.ForeignKey('Vendor', related_name='products', on_delete=models.CASCADE)
     description = models.TextField()
     visited = models.IntegerField(default=0)
     location = models.ForeignKey('Location', on_delete=models.CASCADE)

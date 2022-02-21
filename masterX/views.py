@@ -13,10 +13,6 @@ from reportlab.lib.pagesizes import letter
 from django_filters import rest_framework as filters
 
 
-class AdminCreate(viewsets.ModelViewSet):
-    serializer_class = AdminSerializer
-    queryset = Admins.objects.all().order_by('pk')
-
 class AdsCreate(viewsets.ModelViewSet):
     serializer_class = AdsSerializer
     queryset = Ads.objects.all().order_by('pk')
@@ -28,10 +24,6 @@ class AboutUsCreate(viewsets.ModelViewSet):
 class ClientCreate(viewsets.ModelViewSet):
     serializer_class = ClientSerializer
     queryset = Client.objects.all().order_by('pk')
-
-class AdminCodeCreate(viewsets.ModelViewSet):
-    serializer_class = AdminCodeSerializer
-    queryset = AdminCodeGen.objects.all().order_by('pk')
 
 class ClientCodeCreate(viewsets.ModelViewSet):
     serializer_class = ClientCodeSerializer
@@ -48,9 +40,9 @@ class ClientIPDetailsView(generics.RetrieveUpdateDestroyAPIView):
     queryset = ClientIPLogList.objects.all()
     serializer_class = LoglistSerializer
 
-class BranchCreate(viewsets.ModelViewSet):
-    serializer_class = BranchSerializer
-    queryset = Branch.objects.all().order_by('pk')
+class VendorCreate(viewsets.ModelViewSet):
+    serializer_class = VendorSerializer
+    queryset = Vendor.objects.all().order_by('pk')
 
 class SuperCreate(viewsets.ModelViewSet):
     serializer_class = SuperSerializer
@@ -130,7 +122,7 @@ class DiscountCreate(viewsets.ModelViewSet):
 class ProductFilter(filters.FilterSet):
     class Meta:
         model = Product
-        fields = ('ai', 'name', 'description', 'branch_name', 'category', 'subcategory', 
+        fields = ('ai', 'name', 'description', 'vendor_name', 'category', 'subcategory', 
         'brand', 'location','gender', 'size', 'color', 'date', 'new', 'in_dollar','exchange', 'price', 
         'discount', 'discounted_price', 'new_price', 'calc_dollar', 'calc_discount')
 

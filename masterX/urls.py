@@ -5,13 +5,11 @@ from . import views
 
 router = routers.DefaultRouter()
 
-router.register(r'Admins', AdminCreate)
 router.register(r'ADS', AdsCreate)
 router.register(r'AboutUs', AboutUsCreate)
 router.register(r'Clients', ClientCreate)
-router.register(r'AdminCode', AdminCodeCreate)
 router.register(r'ClientCode', ClientCodeCreate)
-router.register(r'Branch', BranchCreate)
+router.register(r'Vendor', VendorCreate)
 router.register(r'SuperCategory', SuperCreate)
 router.register(r'Category', CategoryCreate)
 router.register(r'SubCategory', SubCategoryCreate)
@@ -31,7 +29,7 @@ router.register(r'Orders', OrderCreate)
 urlpatterns = [
 
     path('', include(router.urls)),
-    path('Branch/products/<int:pk>',ProductDetail.as_view(), name='product_detail'), 
+    path('Vendor/products/<int:pk>',ProductDetail.as_view(), name='product_detail'), 
     path('Brand/products/<int:pk>', ProductDetail.as_view(), name='product_detail'),
     path('SuperCategory/category/<int:pk>', CategoryDetail.as_view(), name='category_detail'),
     path('SuperCategory/products/<int:pk>', ProductDetail.as_view(), name='product_detail'),

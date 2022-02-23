@@ -95,12 +95,12 @@ class VisitCreate(viewsets.ModelViewSet):
         obj.save(update_fields=("visit", ))
         return super().retrieve(request, *args, **kwargs)
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        for obj in queryset:
-            obj.visit = obj.visit + 1
-            obj.save(update_fields=("visit", ))
-        return super().list(request, *args, **kwargs)
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.filter_queryset(self.get_queryset())
+    #     for obj in queryset:
+    #         obj.visit = obj.visit + 1
+    #         obj.save(update_fields=("visit", ))
+    #     return super().list(request, *args, **kwargs)
 
 class LocationCreate(viewsets.ModelViewSet):
     serializer_class = LocationSerializer
@@ -130,6 +130,12 @@ class ProductCreate(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     queryset = Product.objects.all().order_by('pk')
     filterset_class = ProductFilter
+
+    def retrieve(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.visited = obj.visited + 1
+        obj.save(update_fields=("visited", ))
+        return super().retrieve(request, *args, **kwargs)
 
 class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer

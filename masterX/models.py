@@ -11,6 +11,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 class Ads(models.Model):
     name = models.CharField(max_length=500, blank=True, null=True)
     description = models.TextField()
+    spcategory = models.ForeignKey('SuperCategory', on_delete=models.CASCADE)
     photo = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
     
     def __str__(self):

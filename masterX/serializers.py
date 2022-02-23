@@ -4,7 +4,12 @@ from .models import *
 class AdsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Ads
-        fields = ['pk', 'name', 'description', 'photo', 'url']
+        fields = ['pk', 'name', 'description', 'spcategory','photo', 'url']
+
+    def to_representation(self, instance):
+        rep = super(AdsSerializer, self).to_representation(instance)
+        rep['spcategory'] = instance.spcategory.name
+        return rep
 
 class AboutUsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -57,6 +62,11 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
         model = Category
         fields = ['pk', 'ai', 'name', 'super','photo', 'url', 'products', 'subcategory']
 
+    def to_representation(self, instance):
+        rep = super(CategorySerializer, self).to_representation(instance)
+        rep['super'] = instance.super.name
+        return rep
+
 class SubCategorySerializer(serializers.HyperlinkedModelSerializer):
     products = serializers.HyperlinkedRelatedField(many = True, read_only = True,
                                                         view_name='product_detail')
@@ -64,6 +74,11 @@ class SubCategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = SubCategory
         fields = ['pk', 'category', 'name', 'photo', 'url', 'products']
+
+    def to_representation(self, instance):
+        rep = super(SubCategorySerializer, self).to_representation(instance)
+        rep['category'] = instance.category.name
+        return rep
 
 class BrandSerializer(serializers.HyperlinkedModelSerializer):
     products = serializers.HyperlinkedRelatedField(many = True, read_only = True,
@@ -134,7 +149,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super(ProductSerializer, self).to_representation(instance)
-        rep['branch_name'] = instance.branch_name.name
+        rep['vendor_name'] = instance.vendor_name.vendor_name
         rep['supercategory'] = instance.supercategory.name
         rep['category'] = instance.category.name
         rep['subcategory'] = instance.subcategory.name

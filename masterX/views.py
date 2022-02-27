@@ -15,7 +15,7 @@ from django_filters import rest_framework as filters
 
 class AdsCreate(viewsets.ModelViewSet):
     serializer_class = AdsSerializer
-    queryset = Ads.objects.all().order_by('pk')
+    queryset = Ads.objects.all().order_by('-pk')
 
 class AboutUsCreate(viewsets.ModelViewSet):
     serializer_class = AboutUsSerializer
@@ -122,13 +122,13 @@ class DiscountCreate(viewsets.ModelViewSet):
 class ProductFilter(filters.FilterSet):
     class Meta:
         model = Product
-        fields = ('ai', 'name', 'description', 'vendor_name', 'category', 'subcategory', 
-        'brand', 'location','gender', 'size', 'color', 'date', 'new', 'in_dollar','exchange', 'price', 
-        'discount', 'discounted_price', 'new_price', 'calc_dollar', 'calc_discount')
+        fields = ('ai','name','description','vendor_name','supercategory','category','subcategory', 
+        'brand','location','gender','barcode','size','color','date','new','in_dollar','exchange','price', 
+        'discount','discounted_price','new_price','calc_dollar','calc_discount')
 
 class ProductCreate(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
-    queryset = Product.objects.all().order_by('pk')
+    queryset = Product.objects.all().order_by('-pk')
     filterset_class = ProductFilter
 
     def retrieve(self, request, *args, **kwargs):

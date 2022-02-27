@@ -238,6 +238,7 @@ class Product(models.Model):
     subcategory = models.ForeignKey('SubCategory', related_name='products', on_delete=models.CASCADE)
     brand = models.ForeignKey('Brand', related_name='products', on_delete=models.CASCADE)
     new = models.BooleanField(default=False)
+    barcode = models.CharField(max_length=500, null=True, blank=True)
     photo1 = models.ImageField(upload_to = 'Photo_1/%y/%m/%d', blank=True, null=True)
     photo2 = models.ImageField(upload_to = 'Photo_2/%y/%m/%d', blank=True, null=True)
     photo3 = models.ImageField(upload_to = 'Photo_3/%y/%m/%d', blank=True, null=True)

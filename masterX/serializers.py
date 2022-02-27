@@ -143,9 +143,9 @@ class DiscountSerializer(serializers.HyperlinkedModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['pk', 'ai', 'date', 'name', 'vendor_name', 'description', 'visited', 'location','in_dollar', 'exchange', 'price', 'discount', 
-                'discounted_price', 'new_price', 'calc_dollar', 'calc_discount', 'color', 'size', 'gender', 'supercategory',
-                'category', 'subcategory', 'brand', 'new', 'photo1', 'photo2', 'photo3', 'photo4', 'url']
+        fields = ['pk','ai','date','name','vendor_name','description', 'visited', 'location','in_dollar', 'exchange', 'price', 'discount', 
+                'discounted_price','new_price','calc_dollar','calc_discount','color','size','gender','supercategory',
+                'category','subcategory','brand','new','barcode','photo1','photo2','photo3','photo4','url']
 
     def to_representation(self, instance):
         rep = super(ProductSerializer, self).to_representation(instance)

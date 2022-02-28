@@ -145,7 +145,8 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['pk','ai','date','name','vendor_name','description', 'visited', 'location','in_dollar', 'exchange', 'price', 'discount', 
                 'discounted_price','new_price','calc_dollar','calc_discount','color','size','gender','supercategory',
-                'category','subcategory','brand','new','barcode','photo1','photo2','photo3','photo4','url']
+                'category','subcategory','brand','new','barcode','photo1','photo2','photo3','photo4','ip_pro','url']
+        read_only_fields = ('ip_pro',)
 
     def to_representation(self, instance):
         rep = super(ProductSerializer, self).to_representation(instance)
@@ -161,6 +162,10 @@ class ProductSerializer(serializers.ModelSerializer):
         rep['discount'] = instance.discount.discount
         rep['location'] = instance.location.name
         return rep
+
+    def create(self, validated_data):
+        validated_data['ip_pro'] = self.context.get('request').META.get("REMOTE_ADDR")
+        return Product.objects.create(**validated_data)
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

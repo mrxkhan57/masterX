@@ -243,7 +243,8 @@ class Product(models.Model):
     photo2 = models.ImageField(upload_to = 'Photo_2/%y/%m/%d', blank=True, null=True)
     photo3 = models.ImageField(upload_to = 'Photo_3/%y/%m/%d', blank=True, null=True)
     photo4 = models.ImageField(upload_to = 'Photo_4/%y/%m/%d', blank=True, null=True)
-    
+    ip_pro = models.GenericIPAddressField(null=True)
+
     def save(self, *args, **kwargs):
         if self.calc_dollar is True:
             self.price = self.in_dollar * float(self.exchange.exchange)

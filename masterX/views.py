@@ -141,6 +141,17 @@ class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all().order_by('pk')
 
+class ProductIPView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+class ProductIPDetailsView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
 class OrderCreate(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     queryset = Order.objects.all().order_by('pk')

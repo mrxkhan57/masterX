@@ -37,4 +37,5 @@ urlpatterns = [
     path('Category/subcategory/<int:pk>', SubCategoryDetail.as_view(), name='subcategory_detail'),
     path('SubCategory/products/<int:pk>', ProductDetail.as_view(), name='product_detail'),
     path('ClientDATA/', views.ClientIPView.as_view(), name='ClientDATA'),
+    path('Products/', views.ProductIPView.as_view(), name='ProductIP')
 ]

@@ -33,7 +33,8 @@ class LoglistSerializer(serializers.ModelSerializer):
         read_only_fields = ('date', 'client_ip')
 
     def create(self, validated_data):
-        validated_data['client_ip'] = self.context.get('request').META.get("REMOTE_ADDR")
+        validated_data['client_ip'] = self.context.get('request').META.get('HTTP_X_REAL_IP')
+        #validated_data['client_ip'] = self.context.get('request').META.get('HTTP_X_FORWARDED_FOR', self.context.get('request').META.get('REMOTE_ADDR', '')).split(',')[0].strip()
         return ClientIPLogList.objects.create(**validated_data)
 
 class VendorSerializer(serializers.HyperlinkedModelSerializer):
@@ -57,7 +58,7 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
                                                         view_name='product_detail')
     subcategory = serializers.HyperlinkedRelatedField(many = True, read_only = True, 
                                                         view_name='subcategory_detail')
-
+    
     class Meta:
         model = Category
         fields = ['pk', 'ai', 'name', 'super','photo', 'url', 'products', 'subcategory']
@@ -140,13 +141,13 @@ class DiscountSerializer(serializers.HyperlinkedModelSerializer):
         model = Discount
         fields = ['pk', 'discount', 'url']
 
-class ProductSerializer(serializers.ModelSerializer):
+class ProductSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Product
         fields = ['pk','ai','date','name','vendor_name','description', 'visited', 'location','in_dollar', 'exchange', 'price', 'discount', 
                 'discounted_price','new_price','calc_dollar','calc_discount','color','size','gender','supercategory',
-                'category','subcategory','brand','new','barcode','photo1','photo2','photo3','photo4','ip_pro','url']
-        read_only_fields = ('ip_pro',)
+                'category','subcategory','brand','new','free_delivery','barcode','photo1','photo2','photo3','photo4','ip_pro','url']
+        read_only_fields = ('ip_pro','discounted_price','new_price','date','visited',)
 
     def to_representation(self, instance):
         rep = super(ProductSerializer, self).to_representation(instance)

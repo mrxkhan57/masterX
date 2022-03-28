@@ -25,7 +25,7 @@ from masterX import views
 urlpatterns = [
     path('mrx/', admin.site.urls),
     path('', include('masterX.urls')),
-    path('Orderss/', views.index), 
+    path('Orderss', views.index), 
     path('export_orders', views.export_orders),
     path('view_pdf', views.view_pdf),
     re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}), 

@@ -73,7 +73,7 @@ class Vendor(models.Model):
     photo = models.ImageField(upload_to='Vendor/%y/%m/%d', blank=True, null=True)
 
     def __str__(self):
-        return self.admin_name
+        return self.vendor_name
 
     def save(self, *args, **kwargs):
         if self.photo:
@@ -111,7 +111,7 @@ class Category(models.Model):
     super = models.ForeignKey('SuperCategory', related_name='category', on_delete=models.CASCADE)
     photo = models.ImageField(upload_to='Category/%y/%m/%d', blank=True, null=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
     
     def save(self, *args, **kwargs):
@@ -124,6 +124,10 @@ class Category(models.Model):
             self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
                                                 'image/jpeg', sys.getsizeof(outputIoStream), None)
         super(Category, self).save(*args, **kwargs)
+
+    @property
+    def super_name(self):
+        return self.super.name
 
 class SubCategory(models.Model):
     category = models.ForeignKey('Category', related_name='subcategory', on_delete=models.CASCADE)
@@ -238,6 +242,7 @@ class Product(models.Model):
     subcategory = models.ForeignKey('SubCategory', related_name='products', on_delete=models.CASCADE)
     brand = models.ForeignKey('Brand', related_name='products', on_delete=models.CASCADE)
     new = models.BooleanField(default=False)
+    free_delivery = models.BooleanField(default=False)
     barcode = models.CharField(max_length=500, null=True, blank=True)
     photo1 = models.ImageField(upload_to = 'Photo_1/%y/%m/%d', blank=True, null=True)
     photo2 = models.ImageField(upload_to = 'Photo_2/%y/%m/%d', blank=True, null=True)

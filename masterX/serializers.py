@@ -33,7 +33,7 @@ class LoglistSerializer(serializers.ModelSerializer):
         read_only_fields = ('date', 'client_ip')
 
     def create(self, validated_data):
-        validated_data['client_ip'] = self.context.get('request').META.get('HTTP_X_REAL_IP')
+        validated_data['client_ip'] = self.context.get('request').META.get('REMOTE_ADDR')
         #validated_data['client_ip'] = self.context.get('request').META.get('HTTP_X_FORWARDED_FOR', self.context.get('request').META.get('REMOTE_ADDR', '')).split(',')[0].strip()
         return ClientIPLogList.objects.create(**validated_data)
 

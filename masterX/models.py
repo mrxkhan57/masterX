@@ -111,7 +111,7 @@ class Category(models.Model):
     super = models.ForeignKey('SuperCategory', related_name='category', on_delete=models.CASCADE)
     photo = models.ImageField(upload_to='Category/%y/%m/%d', blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
     
     def save(self, *args, **kwargs):
@@ -252,8 +252,14 @@ class Product(models.Model):
 
     def save(self, *args, **kwargs):
         if self.calc_dollar is True:
-            self.price = self.in_dollar * float(self.exchange.exchange)
+            self.new_price = self.in_dollar * float(self.exchange.exchange)
         if self.calc_discount is True:
+            self.discounted_price = self.price * float(self.discount.discount)//100
+            self.new_price = self.price - self.discounted_price
+        if self.calc_discount is False and self.calc_dollar is False:
+            self.new_price = self.price
+        if self.calc_discount is True and self.calc_dollar is True:
+            self.price = self.in_dollar * float(self.exchange.exchange)
             self.discounted_price = self.price * float(self.discount.discount)//100
             self.new_price = self.price - self.discounted_price
         if self.name:

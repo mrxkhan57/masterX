@@ -33,7 +33,12 @@ class LoglistSerializer(serializers.ModelSerializer):
         read_only_fields = ('date', 'client_ip')
 
     def create(self, validated_data):
-        validated_data['client_ip'] = self.context.get('request').META.get('REMOTE_ADDR')
+        validated_data['client_ip'] = self.context.get('request').META.get('HTTP_X_FORWARDED_FOR')
+        if validated_data['client_ip']:
+            validated_data['client_ip'] = validated_data['client_ip'].split(',')[0]
+        else:
+            validated_data['client_ip'] = self.context.get('request').META.get('REMOTE_ADDR')
+        #validated_data['client_ip'] = self.context.get('request').META.get('REMOTE_ADDR')
         #validated_data['client_ip'] = self.context.get('request').META.get('HTTP_X_FORWARDED_FOR', self.context.get('request').META.get('REMOTE_ADDR', '')).split(',')[0].strip()
         return ClientIPLogList.objects.create(**validated_data)
 
@@ -51,7 +56,7 @@ class SuperSerializer(serializers.HyperlinkedModelSerializer):
                                                         view_name='category_detail')
     class Meta:
         model = SuperCategory
-        fields = ['pk','name','photo','category','products','url']
+        fields = ['pk','ai','name','photo','category','products','url']
 
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     products = serializers.HyperlinkedRelatedField(many = True, read_only = True,
@@ -165,7 +170,11 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         return rep
 
     def create(self, validated_data):
-        validated_data['ip_pro'] = self.context.get('request').META.get("REMOTE_ADDR")
+        validated_data['ip_pro'] = self.context.get('request').META.get('HTTP_X_FORWARDED_FOR')
+        if validated_data['ip_pro']:
+            validated_data['ip_pro'] = validated_data['ip_pro'].split(',')[0]
+        else:
+            validated_data['ip_pro'] = self.context.get('request').META.get('REMOTE_ADDR')
         return Product.objects.create(**validated_data)
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):

@@ -1,4 +1,5 @@
 from operator import truediv
+from tkinter.tix import Tree
 from django.db import models
 import random
 from datetime import datetime
@@ -21,8 +22,8 @@ class AboutUs(models.Model):
     website = models.CharField(max_length=500, blank=True, null=True, default=None)
     email = models.EmailField(max_length=300, blank=True, null=True, default=None)
     phone1 = models.CharField(max_length=12, blank=True, null=True, default=None)
-    phone2 = models.CharField(max_length=500, blank=True, null=True, default=None)
-    phone3 = models.CharField( max_length=500, blank=True, null=True, default=None)
+    phone2 = models.CharField(max_length=12, blank=True, null=True, default=None)
+    phone3 = models.CharField( max_length=12, blank=True, null=True, default=None)
 
     def __str__(self):
         return self.website
@@ -222,11 +223,11 @@ class Product(models.Model):
     ai = models.CharField(max_length=300, blank=True, null=True)
     date = models.CharField(max_length=100, blank=True)
     name = models.CharField(max_length=300, blank=True, null=True)
-    vendor_name = models.ForeignKey('Vendor', related_name='products', on_delete=models.CASCADE)
-    description = models.TextField()
+    vendor_name = models.ForeignKey(Vendor, related_name='products', on_delete=models.CASCADE)
+    description = models.TextField(null=True)
     visited = models.IntegerField(default=0)
     location = models.ForeignKey('Location', on_delete=models.CASCADE)
-    in_dollar = models.FloatField(null=True, default=None)
+    in_dollar = models.FloatField(blank=True, null=True)
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
     price = models.FloatField(blank=True, null=True)
     discount = models.ForeignKey(Discount, on_delete=models.CASCADE)
@@ -251,13 +252,28 @@ class Product(models.Model):
     ip_pro = models.GenericIPAddressField(null=True)
 
     def save(self, *args, **kwargs):
-        if self.calc_dollar is True:
+        if self.calc_dollar is True and self.in_dollar is not None:
             self.new_price = self.in_dollar * float(self.exchange.exchange)
-        if self.calc_discount is True:
+            self.price = 0
+        else:
+            self.new_price = 0
+        if self.calc_discount is True and self.price is not None:
             self.discounted_price = self.price * float(self.discount.discount)//100
             self.new_price = self.price - self.discounted_price
+        else:
+            self.discounted_price = 0
         if self.calc_discount is False and self.calc_dollar is False:
             self.new_price = self.price
+        if self.price is None:
+            self.price = 0
+        if self.new_price is None:
+            self.new_price = 0
+        if self.in_dollar is None:
+            self.in_dollar = 0
+        if self.calc_discount is False:
+            self.discounted_price = None
+        if self.discounted_price is None:
+            self.discounted_price = 0
         if self.calc_discount is True and self.calc_dollar is True:
             self.price = self.in_dollar * float(self.exchange.exchange)
             self.discounted_price = self.price * float(self.discount.discount)//100

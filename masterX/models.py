@@ -258,7 +258,7 @@ class Product(models.Model):
         else:
             self.new_price = 0
         if self.calc_discount is True and self.price is not None:
-            self.discounted_price = self.price * float(self.discount.discount)//100
+            self.discounted_price = (self.price * float(self.discount.discount))/100
             self.new_price = self.price - self.discounted_price
         else:
             self.discounted_price = 0
@@ -285,6 +285,10 @@ class Product(models.Model):
             date_ap.append(dt_string)
             date_string = "".join(str(item) for item in date_ap)
             self.date = date_string
+        self.in_dollar = round(self.in_dollar, 2)
+        self.price = round(self.price, 2)
+        self.new_price = round(self.new_price, 2)
+        self.discounted_price = round(self.discounted_price, 2)
         super(Product, self).save(*args,**kwargs)
 
     def __str__(self):

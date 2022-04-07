@@ -80,8 +80,8 @@ class Vendor(models.Model):
         if self.photo:
             imageTemproary = Image.open(self.photo)
             outputIoStream = BytesIO()
-            imageTemproaryResized = imageTemproary.resize( (200,100) ) 
-            imageTemproaryResized.save(outputIoStream , format='JPEG', quality=25)
+            imageTemproaryResized = imageTemproary.resize( (200,200) ) 
+            imageTemproaryResized.save(outputIoStream , format='JPEG', quality=100)
             outputIoStream.seek(0)
             self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
                                                 'image/jpeg', sys.getsizeof(outputIoStream), None)
@@ -95,16 +95,16 @@ class SuperCategory(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        if self.photo:
-            imageTemproary = Image.open(self.photo)
-            outputIoStream = BytesIO()
-            imageTemproaryResized = imageTemproary.resize( (200,100) ) 
-            imageTemproaryResized.save(outputIoStream , format='JPEG', quality=25)
-            outputIoStream.seek(0)
-            self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
-                                                'image/jpeg', sys.getsizeof(outputIoStream), None)
-        super(SuperCategory, self).save(*args, **kwargs)
+    #def save(self, *args, **kwargs):
+    #    if self.photo:
+    #        imageTemproary = Image.open(self.photo)
+    #        outputIoStream = BytesIO()
+    #        imageTemproaryResized = imageTemproary.resize( (250,250) ) 
+    #        imageTemproaryResized.save(outputIoStream , format='JPEG', quality=100)
+    #        outputIoStream.seek(0)
+    #        self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
+    #                                            'image/jpeg', sys.getsizeof(outputIoStream), None)
+    #    super(SuperCategory, self).save(*args, **kwargs)
 
 class Category(models.Model):
     ai = models.CharField(max_length=300, blank=True, null=True)
@@ -115,16 +115,16 @@ class Category(models.Model):
     def __str__(self):
         return self.name
     
-    def save(self, *args, **kwargs):
-        if self.photo:
-            imageTemproary = Image.open(self.photo)
-            outputIoStream = BytesIO()
-            imageTemproaryResized = imageTemproary.resize( (200,100) ) 
-            imageTemproaryResized.save(outputIoStream , format='JPEG', quality=25)
-            outputIoStream.seek(0)
-            self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
-                                                'image/jpeg', sys.getsizeof(outputIoStream), None)
-        super(Category, self).save(*args, **kwargs)
+    #def save(self, *args, **kwargs):
+    #    if self.photo:
+    #        imageTemproary = Image.open(self.photo)
+    #        outputIoStream = BytesIO()
+    #        imageTemproaryResized = imageTemproary.resize( (250,250) ) 
+    #        imageTemproaryResized.save(outputIoStream , format='JPEG', quality=100)
+    #        outputIoStream.seek(0)
+    #        self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
+    #                                            'image/jpeg', sys.getsizeof(outputIoStream), None)
+    #    super(Category, self).save(*args, **kwargs)
 
     @property
     def super_name(self):
@@ -138,16 +138,16 @@ class SubCategory(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        if self.photo:
-            imageTemproary = Image.open(self.photo)
-            outputIoStream = BytesIO()
-            imageTemproaryResized = imageTemproary.resize( (200,100) ) 
-            imageTemproaryResized.save(outputIoStream , format='JPEG', quality=25)
-            outputIoStream.seek(0)
-            self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
-                                                'image/jpeg', sys.getsizeof(outputIoStream), None)
-        super(SubCategory, self).save(*args, **kwargs)
+    #def save(self, *args, **kwargs):
+    #    if self.photo:
+    #        imageTemproary = Image.open(self.photo)
+    #        outputIoStream = BytesIO()
+    #        imageTemproaryResized = imageTemproary.resize( (250,250) ) 
+    #        imageTemproaryResized.save(outputIoStream , format='JPEG', quality=100)
+    #        outputIoStream.seek(0)
+    #        self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
+    #                                            'image/jpeg', sys.getsizeof(outputIoStream), None)
+    #    super(SubCategory, self).save(*args, **kwargs)
         
 class Brand(models.Model):
     name = models.CharField(max_length=300, blank=True, null=True)
@@ -160,8 +160,8 @@ class Brand(models.Model):
         if self.photo:
             imageTemproary = Image.open(self.photo)
             outputIoStream = BytesIO()
-            imageTemproaryResized = imageTemproary.resize( (200,100) ) 
-            imageTemproaryResized.save(outputIoStream , format='JPEG', quality=25)
+            imageTemproaryResized = imageTemproary.resize( (190,140) ) 
+            imageTemproaryResized.save(outputIoStream , format='JPEG', quality=100)
             outputIoStream.seek(0)
             self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
                                                 'image/jpeg', sys.getsizeof(outputIoStream), None)
@@ -276,7 +276,7 @@ class Product(models.Model):
             self.discounted_price = 0
         if self.calc_discount is True and self.calc_dollar is True:
             self.price = self.in_dollar * float(self.exchange.exchange)
-            self.discounted_price = self.price * float(self.discount.discount)//100
+            self.discounted_price = (self.price * float(self.discount.discount))/100
             self.new_price = self.price - self.discounted_price
         if self.name:
             date_ap = []

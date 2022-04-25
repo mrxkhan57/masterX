@@ -79,7 +79,7 @@ class SubCategorySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = SubCategory
-        fields = ['pk', 'category', 'name', 'photo', 'url', 'products']
+        fields = ['pk', 'cr_time','category', 'name', 'photo', 'url', 'products']
 
     def to_representation(self, instance):
         rep = super(SubCategorySerializer, self).to_representation(instance)
@@ -149,10 +149,11 @@ class DiscountSerializer(serializers.HyperlinkedModelSerializer):
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Product
-        fields = ['pk','ai','date','name','vendor_name','description', 'visited', 'location','in_dollar', 'exchange', 'price', 'discount', 
-                'discounted_price','new_price','calc_dollar','calc_discount','color','size','gender','supercategory',
-                'category','subcategory','brand','new','free_delivery','barcode','photo1','photo2','photo3','photo4','ip_pro','url']
-        read_only_fields = ('ip_pro','discounted_price','new_price','date','visited',)
+        fields = ['pk','supercategory','category','subcategory','brand','vendor_name','location','product_id',
+                'date','name','description','barcode','stock_number','visited','in_dollar','exchange', 
+                'price', 'discount','discounted_price','new_price','calc_dollar','calc_discount','color',
+                'size','gender','new','free_delivery','photo1','photo2','photo3','photo4','ip_pro','url']
+        read_only_fields = ('ip_pro','discounted_price','new_price','date','visited')
 
     def to_representation(self, instance):
         rep = super(ProductSerializer, self).to_representation(instance)
@@ -180,5 +181,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Order
-        fields = ['pk', 'ai', 'name_order', 'adress', 'user_name', 'user_email', 'user_phone', 'completed', 'in_process',
+        fields = ['pk','order_id','name_order','vendor_name','adress', 'user_name', 'user_email', 
+                        'user_phone', 'order_note','completed', 'in_process',
                 'color', 'size', 'date', 'price_order', 'quantity', 'result', 'photo', 'url']
+        read_only_fields = ['date']

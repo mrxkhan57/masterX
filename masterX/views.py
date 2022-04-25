@@ -1,4 +1,3 @@
-from dataclasses import fields
 from django.shortcuts import render
 from rest_framework import viewsets, generics
 from .serializers import *
@@ -122,7 +121,7 @@ class DiscountCreate(viewsets.ModelViewSet):
 class ProductFilter(filters.FilterSet):
     class Meta:
         model = Product
-        fields = ('ai','name','description','vendor_name','supercategory','category','subcategory', 
+        fields = ('product_id','name','description','vendor_name','supercategory','category','subcategory', 
         'brand','location','gender','barcode','size','color','date','new','in_dollar','exchange','price', 
         'discount','discounted_price','new_price','calc_dollar','calc_discount')
 
@@ -155,7 +154,8 @@ class ProductIPDetailsView(generics.RetrieveUpdateDestroyAPIView):
 class OrderCreate(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     queryset = Order.objects.all().order_by('pk')
-    filter_fields = ('ai', 'name_order', 'adress', 'user_name', 'user_email', 'user_phone', 
+    filter_fields = ('order_id', 'name_order', 'vendor_name','adress', 'user_name', 
+                    'user_email', 'user_phone', 
                     'completed', 'in_process',
                     'color', 'size', 'price_order', 'quantity', 'result')
 
@@ -175,7 +175,7 @@ def export_orders(request):
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
 
-    columns = ['Date and Time','Address','User name', 'User email', 'User phone',
+    columns = ['Date and Time','Address','Vendor name','User name', 'User email', 'User phone',
                 'Name order', 'Price', 'Quantity', 'Result of Order']
 
     for col_num in range(len(columns)):
@@ -184,7 +184,7 @@ def export_orders(request):
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
 
-    rows = Order.objects.all().values_list('date','adress','user_name', 'user_email',
+    rows = Order.objects.all().values_list('date','adress','vendor_name','user_name', 'user_email',
                          'user_phone', 'name_order', 'price_order', 'quantity', 'result')
     for row in rows:
         row_num += 1
@@ -205,6 +205,7 @@ def view_pdf(request):
     for ord in orders:
         lines.append("Date ==> " + ord.date)
         lines.append("Adress ==> " + ord.adress)
+        lines.append("Client_name ==> " + ord.vendor_name)
         lines.append("Client_name ==> " + ord.user_name)
         lines.append("Client_phone_number ==> " + ord.user_phone)
         lines.append("Name of Order ==> " + ord.name_order)

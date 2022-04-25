@@ -1,5 +1,3 @@
-from operator import truediv
-from tkinter.tix import Tree
 from django.db import models
 import random
 from datetime import datetime
@@ -95,17 +93,6 @@ class SuperCategory(models.Model):
     def __str__(self):
         return self.name
 
-    #def save(self, *args, **kwargs):
-    #    if self.photo:
-    #        imageTemproary = Image.open(self.photo)
-    #        outputIoStream = BytesIO()
-    #        imageTemproaryResized = imageTemproary.resize( (250,250) ) 
-    #        imageTemproaryResized.save(outputIoStream , format='JPEG', quality=100)
-    #        outputIoStream.seek(0)
-    #        self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
-    #                                            'image/jpeg', sys.getsizeof(outputIoStream), None)
-    #    super(SuperCategory, self).save(*args, **kwargs)
-
 class Category(models.Model):
     ai = models.CharField(max_length=300, blank=True, null=True)
     name = models.CharField(max_length=300, blank=True, null=True)
@@ -114,21 +101,6 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-    
-    #def save(self, *args, **kwargs):
-    #    if self.photo:
-    #        imageTemproary = Image.open(self.photo)
-    #        outputIoStream = BytesIO()
-    #        imageTemproaryResized = imageTemproary.resize( (250,250) ) 
-    #        imageTemproaryResized.save(outputIoStream , format='JPEG', quality=100)
-    #        outputIoStream.seek(0)
-    #        self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
-    #                                            'image/jpeg', sys.getsizeof(outputIoStream), None)
-    #    super(Category, self).save(*args, **kwargs)
-
-    @property
-    def super_name(self):
-        return self.super.name
 
 class SubCategory(models.Model):
     category = models.ForeignKey('Category', related_name='subcategory', on_delete=models.CASCADE)
@@ -138,17 +110,6 @@ class SubCategory(models.Model):
     def __str__(self):
         return self.name
 
-    #def save(self, *args, **kwargs):
-    #    if self.photo:
-    #        imageTemproary = Image.open(self.photo)
-    #        outputIoStream = BytesIO()
-    #        imageTemproaryResized = imageTemproary.resize( (250,250) ) 
-    #        imageTemproaryResized.save(outputIoStream , format='JPEG', quality=100)
-    #        outputIoStream.seek(0)
-    #        self.photo = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" %self.photo.name.split('.')[0], 
-    #                                            'image/jpeg', sys.getsizeof(outputIoStream), None)
-    #    super(SubCategory, self).save(*args, **kwargs)
-        
 class Brand(models.Model):
     name = models.CharField(max_length=300, blank=True, null=True)
     photo = models.ImageField(upload_to='Brand/%y/%m/%d', blank=True, null=True)
@@ -220,13 +181,18 @@ class Discount(models.Model):
         return str(self.discount)
 
 class Product(models.Model):
-    ai = models.CharField(max_length=300, blank=True, null=True)
+    supercategory = models.ForeignKey('SuperCategory', related_name='products' ,on_delete=models.CASCADE)
+    category = models.ForeignKey('Category', related_name='products', on_delete=models.CASCADE)
+    subcategory = models.ForeignKey('SubCategory', related_name='products', on_delete=models.CASCADE)
+    brand = models.ForeignKey('Brand', related_name='products', on_delete=models.CASCADE)
+    vendor_name = models.ForeignKey('Vendor', related_name='products', on_delete=models.CASCADE)
+    location = models.ForeignKey('Location', on_delete=models.CASCADE)
+    product_id = models.CharField(max_length=300, blank=True, null=True)
     date = models.CharField(max_length=100, blank=True)
     name = models.CharField(max_length=300, blank=True, null=True)
-    vendor_name = models.ForeignKey(Vendor, related_name='products', on_delete=models.CASCADE)
     description = models.TextField(null=True)
+    stock_number = models.IntegerField(default=0)
     visited = models.IntegerField(default=0)
-    location = models.ForeignKey('Location', on_delete=models.CASCADE)
     in_dollar = models.FloatField(blank=True, null=True)
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
     price = models.FloatField(blank=True, null=True)
@@ -238,10 +204,6 @@ class Product(models.Model):
     color = models.ForeignKey('Color', related_name='products', on_delete=models.CASCADE)
     size = models.ForeignKey('Size', related_name='products', on_delete=models.CASCADE)
     gender = models.ForeignKey('Gender', related_name='products', on_delete=models.CASCADE)
-    supercategory = models.ForeignKey('SuperCategory', related_name='products' ,on_delete=models.CASCADE)
-    category = models.ForeignKey('Category', related_name='products', on_delete=models.CASCADE)
-    subcategory = models.ForeignKey('SubCategory', related_name='products', on_delete=models.CASCADE)
-    brand = models.ForeignKey('Brand', related_name='products', on_delete=models.CASCADE)
     new = models.BooleanField(default=False)
     free_delivery = models.BooleanField(default=False)
     barcode = models.CharField(max_length=500, null=True, blank=True)
@@ -295,21 +257,23 @@ class Product(models.Model):
         return self.name
 
 class Order(models.Model):
-    ai = models.CharField(max_length=300, blank=True, null=True)
+    order_id = models.CharField(max_length=300, blank=True, null=True)
     name_order = models.CharField(max_length=300, blank=True, null=True)
+    vendor_name = models.CharField(max_length=300, blank=True, null=True)
     adress = models.CharField(max_length=500, blank=True, null=True)
     user_name = models.CharField(max_length=300, blank=True, null=True)
     user_email = models.EmailField(max_length=300, blank=True, null=True, default=None)
     user_phone = models.CharField(max_length=300, blank=True, null=True)
+    order_note = models.CharField(max_length=1000, blank=True, null=True)
     completed = models.BooleanField(default=False)
     in_process = models.BooleanField(default=False)
-    color = models.ManyToManyField('Color')
-    size = models.ManyToManyField('Size')
+    color = models.CharField(max_length=500, blank=True, null=True)
+    size = models.CharField(max_length=500, blank=True, null=True)
     date = models.CharField(max_length=100, blank=True)
     price_order = models.FloatField()
     quantity = models.FloatField()
     result = models.FloatField(blank=True, null=True)
-    photo = models.ImageField(upload_to = 'Order/%y/%m/%d', blank=True)
+    photo = models.CharField(max_length=1000, blank=True, null=True)
     file_xlsx = models.FileField()
     
     def save(self, *args, **kwargs):

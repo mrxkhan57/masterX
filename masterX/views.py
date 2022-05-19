@@ -12,6 +12,8 @@ from reportlab.lib.pagesizes import letter
 from django_filters import rest_framework as filters
 
 
+
+
 class AdsCreate(viewsets.ModelViewSet):
     serializer_class = AdsSerializer
     queryset = Ads.objects.all().order_by('-pk')
@@ -159,6 +161,13 @@ class OrderCreate(viewsets.ModelViewSet):
                     'completed', 'in_process',
                     'color', 'size', 'price_order', 'quantity', 'result')
 
+    #def retrieve(self, request, *args, **kwargs, instance):
+    #    obj = self.get_object()
+    #    obj.order_id = generate_order_id()
+    #    obj.save(update_fields=("order_id", ))
+    #
+    #    return super().retrieve(request, *args, **kwargs)
+
 def index(request):   
     return render(request,"index.html")
 
@@ -175,8 +184,8 @@ def export_orders(request):
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
 
-    columns = ['Date and Time','Address','Vendor name','User name', 'User email', 'User phone',
-                'Name order', 'Price', 'Quantity', 'Result of Order']
+    columns = ['ID','Date and Time','Address','Vendor name','User name', 'User email', 'User phone',
+                'Name order', 'Order_ID','Price', 'Quantity', 'Result of Order']
 
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
@@ -184,8 +193,8 @@ def export_orders(request):
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
 
-    rows = Order.objects.all().values_list('date','adress','vendor_name','user_name', 'user_email',
-                         'user_phone', 'name_order', 'price_order', 'quantity', 'result')
+    rows = Order.objects.all().values_list('pk','date','adress','vendor_name','user_name', 'user_email',
+                         'user_phone', 'name_order', 'order_id','price_order', 'quantity', 'result')
     for row in rows:
         row_num += 1
         for col_num in range(len(row)):
@@ -204,15 +213,18 @@ def view_pdf(request):
     lines = []
     for ord in orders:
         lines.append("Date ==> " + ord.date)
+        lines.append("Order_ID ==>" + ord.order_id)
         lines.append("Adress ==> " + ord.adress)
-        lines.append("Client_name ==> " + ord.vendor_name)
+        lines.append("Vendor_name ==> " + ord.vendor_name)
         lines.append("Client_name ==> " + ord.user_name)
         lines.append("Client_phone_number ==> " + ord.user_phone)
         lines.append("Name of Order ==> " + ord.name_order)
         lines.append("Price of Order ==> " + str(ord.price_order))
         lines.append("Quantity of Order ==> " + str(ord.quantity))
         lines.append("Result ====> " + str(ord.result))
-        lines.append(">=============Mr.X==============<")
+        lines.append("")
+        lines.append("Alyjy_Goly___________________")
+        lines.append(">=============< Mr.X >==============<")
 
     for line in lines:
         textob.textLine(line)

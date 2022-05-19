@@ -6,6 +6,9 @@ from PIL import Image
 from io import BytesIO
 import sys
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from .utils import unique_order_id_generator
+from django.db.models.signals import pre_save
+#import uuid
 
 class Ads(models.Model):
     name = models.CharField(max_length=500, blank=True, null=True)
@@ -22,6 +25,7 @@ class AboutUs(models.Model):
     phone1 = models.CharField(max_length=12, blank=True, null=True, default=None)
     phone2 = models.CharField(max_length=12, blank=True, null=True, default=None)
     phone3 = models.CharField( max_length=12, blank=True, null=True, default=None)
+    file = models.FileField()
 
     def __str__(self):
         return self.website
@@ -257,7 +261,7 @@ class Product(models.Model):
         return self.name
 
 class Order(models.Model):
-    order_id = models.CharField(max_length=300, blank=True, null=True)
+    order_id = models.CharField(max_length=120, blank=True, null=True, unique=True)           #UUIDField(default=uuid.uuid4, unique=True, db_index=True, editable=False)
     name_order = models.CharField(max_length=300, blank=True, null=True)
     vendor_name = models.CharField(max_length=300, blank=True, null=True)
     adress = models.CharField(max_length=500, blank=True, null=True)
@@ -267,6 +271,7 @@ class Order(models.Model):
     order_note = models.CharField(max_length=1000, blank=True, null=True)
     completed = models.BooleanField(default=False)
     in_process = models.BooleanField(default=False)
+    cancelled = models.BooleanField(default=False)
     color = models.CharField(max_length=500, blank=True, null=True)
     size = models.CharField(max_length=500, blank=True, null=True)
     date = models.CharField(max_length=100, blank=True)
@@ -275,7 +280,7 @@ class Order(models.Model):
     result = models.FloatField(blank=True, null=True)
     photo = models.CharField(max_length=1000, blank=True, null=True)
     file_xlsx = models.FileField()
-    
+
     def save(self, *args, **kwargs):
         date_ap = []
         now = datetime.now()
@@ -285,10 +290,18 @@ class Order(models.Model):
         self.date = date_string
         if self.quantity:
             self.result = self.price_order * self.quantity
+        self.result = round(self.result, 2)
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name_order
+
+def pre_save_create_order_id(sender, instance, *args, **kwargs):
+    if not instance.order_id:
+        instance.order_id= unique_order_id_generator(instance)
+
+pre_save.connect(pre_save_create_order_id, sender=Order)
+
 class Meta:
     db_table = 'Order'
     

@@ -14,7 +14,7 @@ class AdsSerializer(serializers.HyperlinkedModelSerializer):
 class AboutUsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = AboutUs
-        fields = ['pk', 'website', 'email', 'phone1', 'phone2', 'phone3', 'url']
+        fields = ['pk', 'website', 'email', 'phone1', 'phone2', 'phone3', 'file','url']
         
 class ClientSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -79,7 +79,7 @@ class SubCategorySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = SubCategory
-        fields = ['pk', 'cr_time','category', 'name', 'photo', 'url', 'products']
+        fields = ['pk','category','name','photo','url','products']
 
     def to_representation(self, instance):
         rep = super(SubCategorySerializer, self).to_representation(instance)
@@ -182,6 +182,6 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Order
         fields = ['pk','order_id','name_order','vendor_name','adress', 'user_name', 'user_email', 
-                        'user_phone', 'order_note','completed', 'in_process',
+                        'user_phone', 'order_note','completed', 'in_process', 'cancelled',
                 'color', 'size', 'date', 'price_order', 'quantity', 'result', 'photo', 'url']
-        read_only_fields = ['date']
+        read_only_fields = ['date', 'order_id']

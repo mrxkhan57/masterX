@@ -6,7 +6,7 @@ import string
 def random_string_generator(size=8, chars=string.digits):
     ord = "ORD"
     unique_digit = "".join(random.choice(chars) for _ in range(size))
-    return ord + "_" + unique_digit
+    return ord + "_" + unique_digit + "_"
 def unique_order_id_generator(instance):
     order_new_id= random_string_generator()
 
@@ -16,3 +16,5 @@ def unique_order_id_generator(instance):
     if qs_exists:
         return unique_order_id_generator(instance)
     return order_new_id
+
+

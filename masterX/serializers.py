@@ -43,11 +43,12 @@ class LoglistSerializer(serializers.ModelSerializer):
         return ClientIPLogList.objects.create(**validated_data)
 
 class VendorSerializer(serializers.HyperlinkedModelSerializer):
-    products = serializers.HyperlinkedRelatedField(many = True, read_only = True,
-                                                    view_name='product_detail')
+    supercategory = serializers.HyperlinkedRelatedField(many = True, read_only = True,view_name='supcategory_detail')
+    
     class Meta:
         model = Vendor
-        fields = ['pk','vendor_name','admin_name','username','passwd','phone_number','address','photo', 'products', 'url']
+        fields = ['pk','vendor_name','admin_name','username','passwd','phone_number',
+                    'address','photo','supercategory','url']
 
 class SuperSerializer(serializers.HyperlinkedModelSerializer):
     products = serializers.HyperlinkedRelatedField(many = True, read_only = True,
@@ -66,7 +67,7 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Category
-        fields = ['pk', 'ai', 'name', 'super','photo', 'url', 'products', 'subcategory']
+        fields = ['pk', 'ai', 'name', 'super','photo', 'url', 'subcategory', 'products']
 
     def to_representation(self, instance):
         rep = super(CategorySerializer, self).to_representation(instance)
@@ -126,6 +127,10 @@ class VisitedSerializer(serializers.HyperlinkedModelSerializer):
         model = Visited
         fields = ['visit', 'url']
 
+    #def to_representation(self, instance):
+    #    rep = super(VisitedSerializer, self).to_representation(instance)
+    #    rep['visit'] = str(rep['visit']).rjust(5, '0')
+    #    return rep
 class LocationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Location
@@ -185,3 +190,8 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
                         'user_phone', 'order_note','completed', 'in_process', 'cancelled',
                 'color', 'size', 'date', 'price_order', 'quantity', 'result', 'photo', 'url']
         read_only_fields = ['date', 'order_id']
+    
+    #def to_representation(self, instance):
+    #    rep = super(OrderSerializer, self).to_representation(instance)
+    #    rep['order_id'] = str(rep['order_id']).rjust(10, '0')
+    #    return rep

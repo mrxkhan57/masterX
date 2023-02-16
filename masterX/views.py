@@ -10,9 +10,12 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 from django_filters import rest_framework as filters
+from rest_framework.pagination import PageNumberPagination
 
-
-
+class ResultsPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 10000
 
 class AdsCreate(viewsets.ModelViewSet):
     serializer_class = AdsSerializer
@@ -49,6 +52,9 @@ class SuperCreate(viewsets.ModelViewSet):
     serializer_class = SuperSerializer
     queryset = SuperCategory.objects.all().order_by('pk')
 
+class SuperCatDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = SuperSerializer
+    queryset = SuperCategory.objects.all().order_by('pk')
 class CategoryCreate(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all().order_by('pk')
@@ -93,6 +99,7 @@ class VisitCreate(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         obj = self.get_object()
         obj.visit = obj.visit + 1
+        #obj.visit = f'{self.visit:0>8}'
         obj.save(update_fields=("visit", ))
         return super().retrieve(request, *args, **kwargs)
 
@@ -126,8 +133,8 @@ class ProductFilter(filters.FilterSet):
         fields = ('product_id','name','description','vendor_name','supercategory','category','subcategory', 
         'brand','location','gender','barcode','size','color','date','new','in_dollar','exchange','price', 
         'discount','discounted_price','new_price','calc_dollar','calc_discount')
-
 class ProductCreate(viewsets.ModelViewSet):
+    pagination_class = ResultsPagination
     serializer_class = ProductSerializer
     queryset = Product.objects.all().order_by('-pk')
     filterset_class = ProductFilter

@@ -11,8 +11,8 @@ from django.db.models.signals import pre_save
 #import uuid
 
 class Ads(models.Model):
-    name = models.CharField(max_length=500, blank=True, null=True)
-    description = models.TextField()
+    name = models.CharField(max_length=10, blank=True, null=True)
+    description = models.TextField(null=True)
     spcategory = models.ForeignKey('SuperCategory', on_delete=models.CASCADE)
     photo = models.ImageField(upload_to="ADS/%y/%m/%d", blank=True, null=True)
     
@@ -74,7 +74,7 @@ class Vendor(models.Model):
     phone_number = models.CharField(max_length=12, blank=True, null=True, unique=True)
     address = models.CharField(max_length=500, blank=True, null=True)
     photo = models.ImageField(upload_to='Vendor/%y/%m/%d', blank=True, null=True)
-
+    
     def __str__(self):
         return self.vendor_name
 
@@ -189,7 +189,7 @@ class Product(models.Model):
     category = models.ForeignKey('Category', related_name='products', on_delete=models.CASCADE)
     subcategory = models.ForeignKey('SubCategory', related_name='products', on_delete=models.CASCADE)
     brand = models.ForeignKey('Brand', related_name='products', on_delete=models.CASCADE)
-    vendor_name = models.ForeignKey('Vendor', related_name='products', on_delete=models.CASCADE)
+    vendor_name = models.ForeignKey('Vendor', related_name='supercategory', on_delete=models.CASCADE)
     location = models.ForeignKey('Location', on_delete=models.CASCADE)
     product_id = models.CharField(max_length=300, blank=True, null=True)
     date = models.CharField(max_length=100, blank=True)

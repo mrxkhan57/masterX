@@ -27,15 +27,13 @@ router.register(r'Vendor', VendorCreate)
 router.register(r'Visited', VisitCreate)
 
 urlpatterns = [
-
     path('', include(router.urls)),
-    path('Vendor/products/<int:pk>',ProductDetail.as_view(), name='product_detail'), 
-    path('Brand/products/<int:pk>', ProductDetail.as_view(), name='product_detail'),
+    path('Vendor/supercategory/<int:pk>',SuperCatDetail.as_view(), name='supcategory_detail'),
     path('SuperCategory/category/<int:pk>', CategoryDetail.as_view(), name='category_detail'),
     path('SuperCategory/products/<int:pk>', ProductDetail.as_view(), name='product_detail'),
     path('Category/products/<int:pk>', ProductDetail.as_view(), name='product_detail'),
     path('Category/subcategory/<int:pk>', SubCategoryDetail.as_view(), name='subcategory_detail'),
     path('SubCategory/products/<int:pk>', ProductDetail.as_view(), name='product_detail'),
     path('ClientDATA/', views.ClientIPView.as_view(), name='ClientDATA'),
-    path('Products/', views.ProductIPView.as_view(), name='ProductIP')
+    path('Products/', views.ProductIPView.as_view(), name='ProductIP'),
 ]

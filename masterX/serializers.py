@@ -50,14 +50,37 @@ class VendorSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['pk','vendor_name','admin_name','username','passwd','phone_number',
                     'address','photo','supercategory','url']
 
+#class DynamicFieldsSuperCategorySerializer(serializers.ModelSerializer):
+#    def __init__(self, *args, **kwargs):
+#        # Don't pass the 'fields' arg up to the superclass
+#        fields = kwargs.pop('fields', None)
+#
+#        # Instantiate the superclass normally
+#        super().__init__(*args, **kwargs)
+#
+#        if fields is not None:
+#            # Drop any fields that are not specified in the `fields` argument.
+#            allowed = set(fields)
+#            existing = set(self.fields)
+#            for field_name in existing - allowed:
+#                self.fields.pop(field_name)
+
 class SuperSerializer(serializers.HyperlinkedModelSerializer):
     products = serializers.HyperlinkedRelatedField(many = True, read_only = True,
                                                         view_name='product_detail')
     category = serializers.HyperlinkedRelatedField(many = True, read_only = True,
                                                         view_name='category_detail')
+    #vendors =  VendorSerializer(many=True)                                                                                     
     class Meta:
         model = SuperCategory
         fields = ['pk','ai','name','photo','category','products','url']
+
+    #def create(self, validated_data):
+    #    vendors_data = validated_data.pop('vendors')
+    #    vendor = SuperCategory.objects.create(**validated_data)
+    #    for vendor_data in vendors_data:
+    #        Vendor.objects.create(vendor=vendor, **vendor_data)
+    #    return vendor
 
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     products = serializers.HyperlinkedRelatedField(many = True, read_only = True,

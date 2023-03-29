@@ -13,7 +13,7 @@ from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
 
 class ResultsPagination(PageNumberPagination):
-    page_size = 100
+    page_size = 20
     page_size_query_param = 'page_size'
     max_page_size = 10000
 
@@ -44,29 +44,54 @@ class ClientIPDetailsView(generics.RetrieveUpdateDestroyAPIView):
     queryset = ClientIPLogList.objects.all()
     serializer_class = LoglistSerializer
 
+class VendorFilter(filters.Filterset):
+    class Meta:
+        model = Vendor
+        fields = ('vendor_name','admin_name','username','supercategory')
+        
 class VendorCreate(viewsets.ModelViewSet):
     serializer_class = VendorSerializer
     queryset = Vendor.objects.all().order_by('pk')
+    filterset_class = VendorFilter
 
+class SuperCatFilter(filters.Filterset):
+    class Meta:
+        model = SuperCategory
+        fields = ('name','category','products')
+        
 class SuperCreate(viewsets.ModelViewSet):
     serializer_class = SuperSerializer
     queryset = SuperCategory.objects.all().order_by('pk')
-
+    filterset_class = SuperCatFilter
+    
 class SuperCatDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SuperSerializer
     queryset = SuperCategory.objects.all().order_by('pk')
+    
+class CategoryFilter(filters.FilterSet):
+    class Meta:
+        model = Category
+        fields = ['name', 'super', 'subcategory', 'products']
+
 class CategoryCreate(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all().order_by('pk')
     filter_fields = ('ai', 'name')
-
+    filterset_class = CategoryFilter
+    
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CategorySerializer
     queryset = Category.objects.all().order_by('pk')
 
+class SubCategoryFilter(filters.FilterSet):
+    class Meta:
+        model = SubCategory
+        fields = ['category','name','products']
+
 class SubCategoryCreate(viewsets.ModelViewSet):
     serializer_class = SubCategorySerializer
     queryset = SubCategory.objects.all().order_by('pk')
+    filterset_class = SubCategoryFilter
 
 class SubCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SubCategorySerializer
@@ -136,7 +161,7 @@ class ProductFilter(filters.FilterSet):
 class ProductCreate(viewsets.ModelViewSet):
     pagination_class = ResultsPagination
     serializer_class = ProductSerializer
-    queryset = Product.objects.all().order_by('-pk')
+    queryset = Product.objects.all().order_by('price')
     filterset_class = ProductFilter
 
     def retrieve(self, request, *args, **kwargs):
